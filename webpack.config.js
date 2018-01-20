@@ -5,7 +5,7 @@ const pkg = require('./package.json');
 module.exports = {
   entry: {
     app: './src/index.js',
-    vendor: ['matter-js']
+    vendor: ['matter-js', 'd3', 'save-svg-as-png']
   },
   output: {
     path: __dirname + '/dist',

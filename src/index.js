@@ -1,4 +1,5 @@
 import Matter from "matter-js";
+import Recorder from "./charts";
 
 let Engine = Matter.Engine,
 	Render = Matter.Render,
@@ -22,6 +23,10 @@ class PIDController {
 		this._integral = 0;
 	}
 
+	get lastError() {
+		return this._previousError;
+	}
+
 	calculateError(currentValue) {
 		return this.targetValue - currentValue;
 	}
@@ -42,9 +47,9 @@ class Drone {
 		this._height = 20;
 		this.body = Bodies.rectangle(x, y, this._width, this._height);
 		
-		// regulator wysokości (regulator PD) błąd przeskalowany, żeby przy 300 unitach różnicy wysokości użyć
+		// regulator wysokości (regulator PID) błąd przeskalowany, żeby przy 200 unitach różnicy wysokości użyć
 		// maksymalnej mocy silnika
-		this.heightController = new PIDController(300, 300 / 0.0025, 1, 0.006, 0.6);
+		this.heightController = new PIDController(300, 200 / 0.0025, 1, 0.003, 1);
 		// regulator kąta nachylenia do podłoża (regulator PD)
 		this.angularController = new PIDController(0, 10, 1, 0.01, 0.5);
 	}
@@ -68,6 +73,7 @@ class Drone {
 
 class Simulation {
 	constructor() {
+		this.lastUpdate = 0;
 	}
 
 	init() {
@@ -89,6 +95,8 @@ class Simulation {
 
 		// create two boxes and a ground
 		this.drone = new Drone(300, 610-20);
+		//this.recorder = new Recorder(() => this.drone.heightController.lastError, 50, 1100);
+		//this.recorderForce = new Recorder(() => -this.drone.body.force.y, 50, 1100, 'svg#chart-force', 'chartForce.png');
 		let bbLeft = Bodies.rectangle(0, 300, 60, 810, { isStatic: true });
 		let bbRight = Bodies.rectangle(600, 300, 60, 810, { isStatic: true });
 		let bbBottom = Bodies.rectangle(400, 610, 810, 60, { isStatic: true });
@@ -123,7 +131,17 @@ class Simulation {
 	}
 
 	_afterUpdate(event) {
+		let deltaTime = event.timestamp - this.lastUpdate;
+
 		this.drone.update();
+		/*this.recorder.update(event.timestamp);
+		this.recorderForce.update(event.timestamp);
+
+		if(this.recorder.values.length == this.recorder.numPoints-400) {
+			World.add(this.engine.world, Bodies.circle(this.drone.body.position.x, this.drone.body.position.y - 100, 15));
+		}*/
+
+		this.lastUpdate = event.timestamp;
 	}
 }
 

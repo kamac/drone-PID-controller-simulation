@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "matter-js": "^0.14.1"
+    "d3": "^4.12.2",
+    "matter-js": "^0.14.1",
+    "save-svg-as-png": "^1.2.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
