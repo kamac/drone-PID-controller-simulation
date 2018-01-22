@@ -1,2 +1,3 @@
-# drone-PID-controller-simulation
-a simulation of drone stabilisation using PID controller in matter js
+# drone PID controller simulation
+
+Made with matter-js. An interactive demo to prod and poke available [here](https://kamac.github.io/drone-PID-controller-simulation/index.html)
